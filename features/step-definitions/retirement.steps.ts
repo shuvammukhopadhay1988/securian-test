@@ -8,7 +8,7 @@ Given('the user is on the retirement calculator page', async () => {
 });
 
 When('the user enters retirement details:', async (table) => {
-                                                                                                                                                        await RetirementPage.closeCookiePopup();
+    await RetirementPage.closeCookiePopup();
     const data = table.hashes()[0];
     await RetirementPage.fillBaseForm(data);
     writeLog(`Entered retirement details`);

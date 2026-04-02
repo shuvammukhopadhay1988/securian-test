@@ -1,4 +1,4 @@
-Feature: Retirement Calculator Form Submission
+Feature: Retirement Calculator Form Submission with two scenario,one with social security income and one without
 
 Scenario Outline: Submit form with different social security selections
 Given the user is on the retirement calculator page
@@ -15,4 +15,4 @@ Then the user clicks calculate final amount
 Examples:
 | currentAge | retirementAge | currentIncome | spouseIncome | savings | contribution | increase | ssIncome | ssOverride | additionalIncome | years | inflation | inflationRate | percentIncome | preReturn | postReturn |
 | 40         | 68            | 100000        | 75000        | 500000  | 10           | 0.25     | yes      | 4000       | 500              | 20    | yes       | 3             | 75            | 8         | 5          |
-| 40         | 68            | 100000        | 75000        | 500000  | 10           | 0.25     | no       | 0          | 500              | 20    | yes       | 3             | 75            | 8         | 5          |
+| 35         | 65            | 80000         | 60000        | 400000  | 8            | 0.25     | no       | 0          | 500              | 15    | yes       | 3             | 80            | 9         | 6          |
