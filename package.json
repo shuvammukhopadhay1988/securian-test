@@ -13,8 +13,8 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "wdio": "wdio run ./wdio.conf.ts"
+    "exit": "echo \"Error: no test specified\" && exit 1",
+    "test": "wdio run ./wdio.conf.ts"
   },
   "dependencies": {
     "@wdio/cli": "^9.27.0",

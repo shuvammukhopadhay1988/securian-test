@@ -47,7 +47,7 @@ class RetirementPage {
     }
 
     async open() {
-        await browser.url('https://www.securian.com/insights-tools/retirement-calculator.html', { timeout: 60000 });
+        await browser.url('/retirement-calculator.html', { timeout: 10000 });
         await browser.maximizeWindow();
     }
 
@@ -62,7 +62,7 @@ class RetirementPage {
 
     //take screenshot of the page
     async takeScreenshot(filename: string) {
-        const fileName = `./allure-results/${Date.now()}-${filename}`;
+        const fileName = `./allure-results/logs/${Date.now()}-${filename}`;
         await browser.saveScreenshot(fileName);
     }
 
@@ -141,8 +141,18 @@ class RetirementPage {
 
     // get results
     async getResults() {
-        //pause for 10 seconds to allow results to load
-        await browser.pause(10000);
+        //verify the chart is loaded properly before fetching results
+        const chart = $('//*[@id="monthly-savings-results-table"]');
+
+        await chart.waitForDisplayed({ timeout: 10000 });
+
+        await browser.waitUntil(
+            async () => (await chart.getText()).length > 0,
+            {
+                timeout: 10000,
+                timeoutMsg: 'Chart not fully loaded'
+            }
+        );
         const fileName = `./allure-results/${Date.now()}-results.png`;
         await browser.saveScreenshot(fileName);
         return $('//*[@id="result-message"]');
