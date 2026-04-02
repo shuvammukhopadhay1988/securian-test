@@ -4,7 +4,7 @@ import path from 'path';
 export const config: WebdriverIO.Config = {
     runner: 'local',
     tsConfigPath: './tsconfig.json',
-    baseUrl: 'https://www.securian.com/insights-tools',
+    baseUrl: 'https://www.securian.com/',
     specs: ['./features/**/*.feature'],
 
     maxInstances: 5,

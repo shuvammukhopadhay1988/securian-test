@@ -47,7 +47,7 @@ class RetirementPage {
     }
 
     async open() {
-        await browser.url('/retirement-calculator.html', { timeout: 10000 });
+        await browser.url('insights-tools/retirement-calculator.html', { timeout: 10000 });
         await browser.maximizeWindow();
     }
 
