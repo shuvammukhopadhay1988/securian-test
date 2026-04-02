@@ -10,16 +10,16 @@ class RetirementPage {
     get increase() { return $('#savings-increase-rate'); }
 
     // Social Security
-    get socialSecurityYes(): ChainablePromiseElement {
-        return $('#yes-social-benefits');
+    get socialSecurityYes()  {
+        return $('//label[@for="yes-social-benefits" and contains(text(),"Yes")]');
     }
-    get socialSecurityNo(): ChainablePromiseElement {
-        return $('#no-social-benefits');
+    get socialSecurityNo()  {
+        return $('//label[@for="no-social-benefits" and contains(text(),"No")]');
     }
-    get maritalStatusYes(): ChainablePromiseElement {
-        return $('#married');
+    get maritalStatusYes()  {
+        return $('//label[@for="married" and contains(text(),"Married")]');
     }
-    get socialSecurityOverride(): ChainablePromiseElement {
+    get socialSecurityOverride()  {
         return $('#social-security-override');
     }
 
@@ -31,10 +31,11 @@ class RetirementPage {
     // Additional Fields
     get additionalIncome() { return $('#additional-income'); }
     get years() { return $('#retirement-duration'); }
-    get inflationYes() { return $('#include-inflation'); }
+    get inflationYes() { return $('//label[@for="include-inflation" and contains(text(),"Yes")]'); }
+    get inflationRate() { return $('#expected-inflation-rate'); }
     get percentIncome() { return $('#retirement-annual-income'); }
     get preReturn() { return $('#pre-retirement-roi'); }
-    get postReturn() { return $('#post-retirement-return'); }
+    get postReturn() { return $('#post-retirement-roi'); }
 
     // Adjust Defaults
     get saveChangesButton() {
@@ -45,18 +46,44 @@ class RetirementPage {
         return $('//button[@type="button" and contains(text(),"Calculate")]');
     }
 
+    // get results
+    get results() {
+        return $('//*[@id="result-message"]');
+    }
+
     async open() {
         await browser.url('https://www.securian.com/insights-tools/retirement-calculator.html');
+        await browser.maximizeWindow();
+        console.log('Pausing before filling the form');
+        await browser.pause(20000);
+    }
+
+    //close cookie popup
+    async closeCookiePopup() {
+        const cookiePopup = $('#onetrust-group-container');
+        if (await cookiePopup.isDisplayed()) {
+            const rejectButton = $('//button[contains(text(),"Reject optional cookies")]');
+            await rejectButton.click();
+        }
     }
 
     async fillBaseForm(data: any) {
+        console.log('Pausing before filling the form');
+        await browser.pause(10000);
+        console.log('Filling base form with data');
         await this.currentAge.setValue(data.currentAge);
         await this.retirementAge.setValue(data.retirementAge);
-        await this.currentIncome.setValue(data.currentIncome);
-        await this.spouseIncome.setValue(data.spouseIncome);
-        await this.savings.setValue(data.savings);
-        await this.contribution.setValue(data.contribution);
-        await this.increase.setValue(data.increase);
+        await this.currentIncome.click();
+        await browser.keys('ArrowRight');
+        await this.currentIncome.addValue(data.currentIncome);
+        await this.spouseIncome.click();
+        await browser.keys('ArrowRight');
+        await this.spouseIncome.addValue(data.spouseIncome);
+        await this.savings.click();
+        await browser.keys('ArrowRight');
+        await this.savings.addValue(data.savings);
+        await this.contribution.addValue(data.contribution);
+        await this.increase.addValue(data.increase);
     }
 
     // Method updated with conditional waits
@@ -64,7 +91,7 @@ class RetirementPage {
         const socialvalue = option.toLowerCase();
 
         if (socialvalue === 'yes') {
-            await this.socialSecurityYes.waitForClickable();
+            //await this.socialSecurityYes.waitForClickable();
             await this.socialSecurityYes.click();
 
             // Wait for fields to displayed
@@ -79,7 +106,7 @@ class RetirementPage {
             });
 
         } else if (socialvalue === 'no') {
-            await this.socialSecurityNo.waitForClickable();
+            //await this.socialSecurityNo.waitForClickable();
             await this.socialSecurityNo.click();
 
             // Optional: ensure fields are NOT displayed
@@ -93,15 +120,15 @@ class RetirementPage {
     }
     // Select Marital Status = Married
     async selectMaritalStatus() {
-        await this.maritalStatusYes.waitForClickable();
+        //await this.maritalStatusYes.waitForClickable();
         await this.maritalStatusYes.click();
     }
 
     // Enter Social Security Override
     async enterSocialSecurityOverride(amount: string) {
-        await this.socialSecurityOverride.waitForDisplayed();
-        await this.socialSecurityOverride.clearValue();
-        await this.socialSecurityOverride.setValue(amount);
+        await this.socialSecurityOverride.click();
+        await browser.keys('ArrowRight');
+        await this.socialSecurityOverride.addValue(amount);
     }
 
     async clickAdjustDefaults() {
@@ -109,16 +136,20 @@ class RetirementPage {
     }
 
     async fillAdditionalFields(data: any) {
-        await this.additionalIncome.setValue(data.additionalIncome);
+        await this.additionalIncome.click();
+        await browser.keys('ArrowRight');
+        await this.additionalIncome.addValue(data.additionalIncome);
         await this.years.setValue(data.years);
 
         if (data.inflation.toLowerCase() === 'yes') {
             await this.inflationYes.click();
         }
+        await this.inflationRate.click();
+        await this.inflationRate.addValue(data.inflationRate);
 
-        await this.percentIncome.setValue(data.percentIncome);
-        await this.preReturn.setValue(data.preReturn);
-        await this.postReturn.setValue(data.postReturn);
+        await this.percentIncome.addValue(data.percentIncome);
+        await this.preReturn.addValue(data.preReturn);
+        await this.postReturn.addValue(data.postReturn);
         await this.saveChangesButton.click();
     }
 
