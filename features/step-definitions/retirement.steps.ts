@@ -8,24 +8,15 @@ Given('the user is on the retirement calculator page', async () => {
 });
 
 When('the user enters retirement details:', async (table) => {
+                                                                                                                                                        await RetirementPage.closeCookiePopup();
     const data = table.hashes()[0];
     await RetirementPage.fillBaseForm(data);
     writeLog(`Entered retirement details`);
 });
 
-When('the user selects social security income as {string}', async (option: string) => {
-    await RetirementPage.selectSocialSecurity(option);
+When('the user selects social security income as {string} and override amount {string}', async (option: string, amount: string) => {
+    await RetirementPage.selectSocialSecurity(option, amount);
     writeLog(`Selected social security income option: ${option}`);
-});
-
-Then('additional social security fields should be displayed', async () => {
-    await RetirementPage.selectMaritalStatus(); 
-    writeLog('Selected marital status as married');
-});
-
-When('the user enters social security override as {string}', async (value: string) => {
-    await RetirementPage.enterSocialSecurityOverride(value);
-    writeLog(`Entered social security override: ${value}`);
 });
 
 When('the user clicks on adjust default values', async () => {
@@ -39,9 +30,8 @@ When('the user enters additional adjustment details:', async (table) => {
     writeLog('Entered additional adjustment details');
 });
 
-When('the user clicks calculate final amount', async () => {
+Then('the user clicks calculate final amount', async () => {
     await RetirementPage.clickCalculate();
     writeLog('Clicked calculate final amount');
-    writeLog(await RetirementPage.results.getText());
-    await browser.saveScreenshot('../../allure-results/screenshots/final-results.png');
+    writeLog(await (await RetirementPage.getResults()).getText());
 });

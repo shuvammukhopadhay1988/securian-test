@@ -10,16 +10,16 @@ class RetirementPage {
     get increase() { return $('#savings-increase-rate'); }
 
     // Social Security
-    get socialSecurityYes()  {
+    get socialSecurityYes() {
         return $('//label[@for="yes-social-benefits" and contains(text(),"Yes")]');
     }
-    get socialSecurityNo()  {
+    get socialSecurityNo() {
         return $('//label[@for="no-social-benefits" and contains(text(),"No")]');
     }
-    get maritalStatusYes()  {
+    get maritalStatusYes() {
         return $('//label[@for="married" and contains(text(),"Married")]');
     }
-    get socialSecurityOverride()  {
+    get socialSecurityOverride() {
         return $('#social-security-override');
     }
 
@@ -46,11 +46,6 @@ class RetirementPage {
         return $('//button[@type="button" and contains(text(),"Calculate")]');
     }
 
-    // get results
-    get results() {
-        return $('//*[@id="result-message"]');
-    }
-
     async open() {
         await browser.url('https://www.securian.com/insights-tools/retirement-calculator.html', { timeout: 60000 });
         await browser.maximizeWindow();
@@ -63,6 +58,12 @@ class RetirementPage {
             const rejectButton = $('//button[contains(text(),"Reject optional cookies")]');
             await rejectButton.click();
         }
+    }
+
+    //take screenshot of the page
+    async takeScreenshot(filename: string) {
+        const fileName = `./allure-results/${Date.now()}-${filename}`;
+        await browser.saveScreenshot(fileName);
     }
 
     async fillBaseForm(data: any) {
@@ -83,23 +84,20 @@ class RetirementPage {
     }
 
     // Method updated with conditional waits
-    async selectSocialSecurity(option: string) {
+    async selectSocialSecurity(option: string, amount: string) {
         const socialvalue = option.toLowerCase();
 
         if (socialvalue === 'yes') {
             //await this.socialSecurityYes.waitForClickable();
             await this.socialSecurityYes.click();
 
-            // Wait for fields to displayed
-            await this.maritalStatusYes.waitForDisplayed({
-                timeout: 5000,
-                timeoutMsg: 'Marital status field did not appear after selecting yes'
-            });
+            // select marital status as married
+            await this.maritalStatusYes.click()
 
-            await this.socialSecurityOverride.waitForDisplayed({
-                timeout: 5000,
-                timeoutMsg: 'Social Security override field did not appear after selecting yes'
-            });
+            //select Social security ovveride amount
+            await this.socialSecurityOverride.click();
+            await browser.keys('ArrowRight');
+            await this.socialSecurityOverride.addValue(amount);
 
         } else if (socialvalue === 'no') {
             //await this.socialSecurityNo.waitForClickable();
@@ -113,18 +111,6 @@ class RetirementPage {
             //not needed but still kept
             throw new Error(`Invalid option: ${option}. Use "yes" or "no".`);
         }
-    }
-    // Select Marital Status = Married
-    async selectMaritalStatus() {
-        //await this.maritalStatusYes.waitForClickable();
-        await this.maritalStatusYes.click();
-    }
-
-    // Enter Social Security Override
-    async enterSocialSecurityOverride(amount: string) {
-        await this.socialSecurityOverride.click();
-        await browser.keys('ArrowRight');
-        await this.socialSecurityOverride.addValue(amount);
     }
 
     async clickAdjustDefaults() {
@@ -151,6 +137,15 @@ class RetirementPage {
 
     async clickCalculate() {
         await this.calculateBtn.click();
+    }
+
+    // get results
+    async getResults() {
+        //pause for 10 seconds to allow results to load
+        await browser.pause(10000);
+        const fileName = `./allure-results/${Date.now()}-results.png`;
+        await browser.saveScreenshot(fileName);
+        return $('//*[@id="result-message"]');
     }
 }
 
