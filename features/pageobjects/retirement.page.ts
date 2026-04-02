@@ -52,10 +52,8 @@ class RetirementPage {
     }
 
     async open() {
-        await browser.url('https://www.securian.com/insights-tools/retirement-calculator.html');
+        await browser.url('https://www.securian.com/insights-tools/retirement-calculator.html', { timeout: 60000 });
         await browser.maximizeWindow();
-        console.log('Pausing before filling the form');
-        await browser.pause(20000);
     }
 
     //close cookie popup
@@ -68,9 +66,7 @@ class RetirementPage {
     }
 
     async fillBaseForm(data: any) {
-        console.log('Pausing before filling the form');
-        await browser.pause(10000);
-        console.log('Filling base form with data');
+        //console.log('Filling base form with data');
         await this.currentAge.setValue(data.currentAge);
         await this.retirementAge.setValue(data.retirementAge);
         await this.currentIncome.click();

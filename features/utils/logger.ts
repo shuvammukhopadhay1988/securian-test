@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-const logFilePath = path.join(__dirname, '.././allure-results/test-log.txt');
+const logFilePath = path.join(__dirname, '../../allure-results/logs/test.log');
 
 // Ensure logs directory exists
 if (!fs.existsSync(path.dirname(logFilePath))) {

@@ -43,5 +43,5 @@ When('the user clicks calculate final amount', async () => {
     await RetirementPage.clickCalculate();
     writeLog('Clicked calculate final amount');
     writeLog(await RetirementPage.results.getText());
-    await browser.saveScreenshot('.././allure-results/screenshots/result.png');
+    await browser.saveScreenshot('../../allure-results/screenshots/final-results.png');
 });
